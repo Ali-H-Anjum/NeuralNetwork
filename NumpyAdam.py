@@ -87,11 +87,12 @@ def plot_loss(x, y):
     plt.xlabel('Epochs')
     plt.ylabel('Cost')
     plt.title('Loss')
+    plt.savefig('LossAdam')
     plt.show()
 
 def gradient_descent(X, Y, iterations):
     size , m = X.shape
-    m_dw, v_dw, m_db, v_db, beta1, beta2, epsilon, eta, W1, b1, W2, b2 = initialize_adam(size)
+    m_dw, v_dw, m_db, v_db, beta1, beta2, epsilon, alpha, W1, b1, W2, b2 = initialize_adam(size)
     xArray = []
     yLoss = []
 
@@ -99,13 +100,13 @@ def gradient_descent(X, Y, iterations):
 
         Z1, A1, Z2, A2 = forward_propagation(X, W1, b1, W2, b2)
         dW1, db1, dW2, db2 = backward_propagation(X, Y, A1, A2, W2, Z1, m)
-        W1, b1 = update_adam(i, W1, b1, dW1, db1, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, eta)
-        W2, b2 = update_adam(i, W2, b2, dW2, db2, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, eta)
+        W1, b1 = update_adam(i, W1, b1, dW1, db1, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, alpha)
+        W2, b2 = update_adam(i, W2, b2, dW2, db2, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, alpha)
 
         xArray.append(i)
         if (i+1) % int(iterations/iterations) == 0:
             prediction = get_predictions(A2)
-            if (i+1) % int(iterations/iterations) == 0:
+            if (i+1) % int(iterations/10) == 0:
                 print(f"Iteration: {i+1} / {iterations}")
                 print(f'{get_accuracy(prediction, Y):.3%}')
 
@@ -128,10 +129,10 @@ def initialize_adam(size):
     beta1 = 0.9
     beta2 = 0.999
     epsilon = 1e-8
-    eta = 0.01
-    return m_dw, v_dw, m_db, v_db, beta1, beta2, epsilon, eta, W1, b1, W2, b2 
+    alpha = 0.01
+    return m_dw, v_dw, m_db, v_db, beta1, beta2, epsilon, alpha, W1, b1, W2, b2 
 
-def update_adam(t, w, b, dw, db, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, eta):
+def update_adam(t, w, b, dw, db, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, alpha):
 
     b = np.reshape(b, (10,1))
     db = np.reshape(db, (10, 1))
@@ -147,8 +148,8 @@ def update_adam(t, w, b, dw, db, m_dw, m_db, v_dw, v_db, beta1, beta2, epsilon, 
     v_dw_corr = v_dw / (1 - beta2**t) #10, 10
     v_db_corr = v_db / (1 - beta2**t) #10, 
 
-    w = w - eta * (m_dw_corr / (np.sqrt(abs(v_dw_corr)) + epsilon))  #update biases
-    b = b - eta * (m_db_corr / (np.sqrt(abs(v_db_corr)) + epsilon)) #update biases
+    w -= alpha * (m_dw_corr / (np.sqrt(abs(v_dw_corr)) + epsilon))  #update biases
+    b -= alpha * (m_db_corr / (np.sqrt(abs(v_db_corr)) + epsilon)) #update biases
     return w, b
 
 def loss_function(m):
@@ -168,7 +169,7 @@ width = X_train.shape[1]
 height = X_train.shape[2]
 X_train = X_train.reshape(X_train.shape[0], width * height).T / scale
 X_test = X_test.reshape(X_test.shape[0], width * height).T  / scale
-iterations = 50
+iterations = 200
 
 W1, b1, W2, b2 = gradient_descent(X_train, Y_train, iterations)
 with open("trained_params.pkl","wb") as dump_file:
@@ -178,7 +179,7 @@ with open("trained_params.pkl","rb") as dump_file:
     W1, b1, W2, b2 = pickle.load(dump_file)
 
 for x in range(1, 11):
-    random_Index = np.random.randint(200)
+    random_Index = np.random.randint(10000)
     show_prediction(random_Index, X_test, Y_test, W1, b1, W2, b2)
 
 

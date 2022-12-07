@@ -94,6 +94,7 @@ def plot_loss(x, y):
     plt.xlabel('Epochs')
     plt.ylabel('Cost')
     plt.title('Loss')
+    plt.savefig('LossSGD')
     plt.show()
 
 def gradient_descent(X, Y, alpha, iterations):
@@ -110,7 +111,7 @@ def gradient_descent(X, Y, alpha, iterations):
 
         if (i+1) % int(iterations/iterations) == 0:
             prediction = get_predictions(A2)
-            if (i+1) % int(iterations/iterations) == 0:
+            if (i+1) % int(iterations/10) == 0:
                 print(f"Iteration: {i+1} / {iterations}")
                 print(f'{get_accuracy(prediction, Y):.3%}')
             loss = compute_loss(Y_train, prediction)
@@ -126,9 +127,10 @@ width = X_train.shape[1]
 height = X_train.shape[2]
 X_train = X_train.reshape(X_train.shape[0], width * height).T / scale
 X_test = X_test.reshape(X_test.shape[0], width * height).T  / scale
-iterations = 50
+iterations = 200
+alpha = 0.15
 
-W1, b1, W2, b2 = gradient_descent(X_train, Y_train, 0.15, iterations)
+W1, b1, W2, b2 = gradient_descent(X_train, Y_train, alpha, iterations)
 with open("trained_params.pkl","wb") as dump_file:
     pickle.dump((W1, b1, W2, b2),dump_file)
 
@@ -136,6 +138,6 @@ with open("trained_params.pkl","rb") as dump_file:
     W1, b1, W2, b2 = pickle.load(dump_file)
 
 for x in range(1, 11):
-    random_Index = np.random.randint(200)
+    random_Index = np.random.randint(10000)
     show_prediction(random_Index, X_test, Y_test, W1, b1, W2, b2)
 
