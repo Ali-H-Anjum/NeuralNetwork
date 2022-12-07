@@ -4,6 +4,8 @@ import pickle
 from keras.datasets import mnist
 import matplotlib.pyplot as plt
 
+test 
+
 def ReLU(Z):
     return np.maximum(Z,0)
 
