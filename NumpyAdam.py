@@ -87,7 +87,7 @@ def plot_loss(x, y):
     plt.xlabel('Epochs')
     plt.ylabel('Cost')
     plt.title('Loss')
-    plt.savefig('LossAdam')
+    plt.savefig('Models/LossAdam')
     plt.show()
 
 def gradient_descent(X, Y, iterations):
