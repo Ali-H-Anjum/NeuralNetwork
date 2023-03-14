@@ -33,24 +33,24 @@ def one_hot(Y):
 
 def init_params(size):
     W1 = np.random.rand(10,size) * np.sqrt(1./(784))
-    b1 = np.random.rand(10,1) * np.sqrt(1./10)
+    b1 = 0
     W2 = np.random.rand(10,10) * np.sqrt(1./20)
-    b2 = np.random.rand(10,1) * np.sqrt(1./(784))
+    b2 = 0
     return W1,b1,W2,b2
 
 def forward_propagation(X,W1,b1,W2,b2):
     Z1 = W1.dot(X) + b1 
-    A1 = Swish(Z1) 
+    A1 = Leaky_ReLU(Z1) 
     Z2 = W2.dot(A1) + b2 
     A2 = softmax(Z2) 
     return Z1, A1, Z2, A2
 
 def backward_propagation(X, Y, A1, A2, W2, Z1, m):
     one_hot_Y = one_hot(Y)
-    dZ2 = 2*(A2 - one_hot_Y) #10,m
+    dZ2 = A2 - one_hot_Y #10,m
     dW2 = 1/m * (dZ2.dot(A1.T)) # 10 , 10
     db2 = 1/m * np.sum(dZ2,1) # 10, 1
-    dZ1 = W2.T.dot(dZ2)*der_Swish(Z1) # 10, m
+    dZ1 = W2.T.dot(dZ2)*der_Leaky_ReLU(Z1) # 10, m
     dW1 = 1/m * (dZ1.dot(X.T)) #10, 784
     db1 = 1/m * np.sum(dZ1,1) # 10, 1
     return dW1, db1, dW2, db2
@@ -121,12 +121,13 @@ def gradient_descent(X, Y, alpha, iterations):
 
 ############## MAIN ##############
 
-(X_train, Y_train), (X_test, Y_test) = mnist.load_data()
+(X_train, Y_train), (X_test, Y_test) = mnist.load_data()                 
 scale = 255 
 width = X_train.shape[1]
 height = X_train.shape[2]
 X_train = X_train.reshape(X_train.shape[0], width * height).T / scale
 X_test = X_test.reshape(X_test.shape[0], width * height).T  / scale
+
 iterations = 200
 alpha = 0.15
 

@@ -33,10 +33,14 @@ def one_hot(Y):
 
 def init_params(size):
     W1 = np.random.rand(10,size) * np.sqrt(1./(784))
-    b1 = np.random.rand(10,1) * np.sqrt(1./10)
+    b1 = 0
     W2 = np.random.rand(10,10) * np.sqrt(1./20)
-    b2 = np.random.rand(10,1) * np.sqrt(1./(784))
-    return W1,b1,W2,b2
+    b2 = 0
+    Vdw = 0
+    Sdw = 0
+    Vdb = 0
+    Sdb = 0
+    return W1, b1, W2, b2, Vdw, Sdw, Vdb, Sdb
 
 def forward_propagation(X,W1,b1,W2,b2):
     Z1 = W1.dot(X) + b1 #10, m
@@ -122,9 +126,9 @@ def initialize_adam(size):
     v_db = 0
 
     W1 = np.random.rand(10,size) * np.sqrt(1./(784))
-    b1 = np.random.rand(10,1) * np.sqrt(1./10)
+    b1 = 0
     W2 = np.random.rand(10,10) * np.sqrt(1./20)
-    b2 = np.random.rand(10,1) * np.sqrt(1./(784))
+    b2 = 0
 
     beta1 = 0.9
     beta2 = 0.999
